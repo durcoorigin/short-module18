@@ -29,10 +29,24 @@ const thoughtController = {
     },
 
     // Create Thought
-    createThought({ body }, res) {
+    addThought({ params, body }, res) {
+        console.log(body);
         Thoughts.create(body)
-            .then(dbThoughtData => res.json(dbThoughtData))
-            .catch(err => res.status(400).json(err));
+          .then(({ _id }) => {
+            return User.findOneAndUpdate(
+              { _id: params.userId },
+              { $push: { thoughts: _id } },
+              { new: true }
+            );
+          })
+          .then(dbUserData => {
+            if (!dbUserData) {
+              res.status(404).json({ message: 'No user found with this id!' });
+              return;
+            }
+            res.json(dbUserData);
+          })
+          .catch(err => res.json(err));
     },
 
     // update Thought by id
@@ -50,15 +64,25 @@ const thoughtController = {
 
     // Delete Thought
     deleteThought({ params }, res) {
-        Thoughts.findOneAndDelete({ _id: params.id })
-            .then (dbThoughtData => {
-                if (!dbThoughtData) {
-                    res.status(404).json({ message: 'No thoughts found with that id!'});
-                    return;
-                }
-                res.json(dbThoughtData);
-            })
-            .catch(err => res.status(400).json(err));            
+        thoughts.findOneAndDelete({ _id: params.thoughtId })
+        .then(deletedThought => {
+          if (!deletedThought) {
+            return res.status(404).json({ message: 'No thought with this id!' });
+          }
+          return User.findOneAndUpdate(
+            { _id: params.userId },
+            { $pull: { Thoughts: params.thoughtId } },
+            { new: true }
+          );
+        })
+        .then(dbUserData => {
+          if (!dbUserData) {
+            res.status(404).json({ message: 'No user found with this id!' });
+            return;
+          }
+          res.json(dbUserData);
+        })
+        .catch(err => res.json(err));
     }
 };
 
