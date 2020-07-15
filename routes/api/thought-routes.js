@@ -20,14 +20,10 @@ router
     .get(getThoughtById);
 
 // set up DELETE at api/thoughts/:userId/:thoughtId
-router
-    .route('/:userId/:thoughtId')
-    .delete(deleteThought);
+router.route('/:userId/:thoughtId').delete(deleteThought);
 
 // set up POST at api/Thoughts/:userId
-router
-    .route('/:userId')
-    .post(addThought);
+router.route('/:userId').post(addThought);
 
 
 module.exports = router;
