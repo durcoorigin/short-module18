@@ -49,6 +49,23 @@ const thoughtController = {
           .catch(err => res.json(err));
     },
 
+    // Add Reaction
+    addReaction({ params, body }, res) {
+      Thoughts.findOneAndUpdate(
+        { _id: params.thoughtId },
+        { $push: { reactions: body } },
+        { new: true }
+      )
+        .then(dbUserData => {
+          if (!dbUserData) {
+            res.status(404).json({ message: 'No user found with this id!' });
+            return;
+          }
+          res.json(dbUserData);
+        })
+        .catch(err => res.json(err));
+    },
+
     // update Thought by id
     updateThought({ params, body }, res) {
         Thoughts.findOneAndUpdate({ _id: params.id }, body, { new: true})
@@ -82,6 +99,18 @@ const thoughtController = {
           }
           res.json(dbUserData);
         })
+        .catch(err => res.json(err));
+    },
+
+    // Delete Reaction
+    // remove reply
+    removeReaction({ params }, res) {
+      Thoughts.findOneAndUpdate(
+        { _id: params.thoughtId },
+        { $pull: { reactions: { reactionId: params.reactionId } } },
+        { new: true }
+      )
+        .then(dbUserData => res.json(dbUserData))
         .catch(err => res.json(err));
     }
 };

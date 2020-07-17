@@ -4,7 +4,7 @@ const moment = require('moment');
 const ReactionSchema = new Schema({
     // set custom id to avoid confusion with parent comment's _id field
     reactionId: {
-        type: Schema.indexTypes.ObjectId,
+        type: Schema.Types.ObjectId,
         default: () => new Types.ObjectId()
     },
     reactionBody: {
