@@ -35,6 +35,6 @@ router
 // set up DELETE for reactions
 router
     .route('/:userId/:thoughtId/:reactionId')
-    .delete(removeReaction);P
+    .delete(removeReaction);
 
 module.exports = router;
